@@ -1,8 +1,9 @@
 'use client';
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { getSession, clearSession, getToken } from '@/lib/auth';
+import { getSession, getToken } from '@/lib/auth';
 import { apiStats, apiStudents, apiAnnouncements } from '@/lib/api';
+import Navbar from '@/components/navbar';
 
 const PAGE_SIZE = 20;
 
@@ -138,11 +139,6 @@ export default function Dashboard() {
     fetchStudents(q, pg);
   };
 
-  const logout = () => {
-    clearSession();
-    router.push('/');
-  };
-
   if (!partner) return null;
 
   const BASE = process.env.NEXT_PUBLIC_API || 'https://codezoner.in';
@@ -152,58 +148,12 @@ export default function Dashboard() {
 
   return (
     <div style={{ minHeight: '100vh', background: '#F8FAFC', fontFamily: 'system-ui,sans-serif' }}>
-      {/* Header */}
-      <div style={{
-        background: '#fff', borderBottom: '1px solid #E2E8F0',
-        padding: '0 24px', display: 'flex', alignItems: 'center',
-        justifyContent: 'space-between', height: 60
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <div style={{
-            width: 36, height: 36, background: '#1E3A8A', borderRadius: 10,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: 13, fontWeight: 800, color: '#fff'
-          }}>CZ</div>
-          <div>
-            <div style={{ fontSize: 14, fontWeight: 700, color: '#0F172A' }}>
-              CodeZoner Partner Portal
-            </div>
-            <div style={{ fontSize: 11, color: '#94A3B8' }}>portal.codezoner.in</div>
-          </div>
-        </div>
-
-        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-          <div style={{ textAlign: 'right' }}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: '#0F172A' }}>{partner.name}</div>
-            <div style={{ display: 'flex', gap: 6, justifyContent: 'flex-end', marginTop: 2 }}>
-              <span style={{
-                background: isExec ? '#EDE9FE' : '#DBEAFE',
-                color: isExec ? '#6D28D9' : '#1D4ED8',
-                fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 5
-              }}>
-                {isExec ? 'Executive' : 'Ambassador'}
-              </span>
-              <span style={{
-                background: '#F1F5F9', color: '#64748B',
-                fontSize: 10, fontWeight: 600, padding: '2px 8px', borderRadius: 5
-              }}>
-                {partner.portalId}
-              </span>
-            </div>
-          </div>
-          <a href="/profile" style={{
-            background: '#EFF6FF', color: '#1D4ED8',
-            border: '1px solid #BFDBFE', borderRadius: 8,
-            padding: '7px 14px', fontSize: 12,
-            fontWeight: 600, cursor: 'pointer', textDecoration: 'none'
-          }}>My Profile</a>
-          <button onClick={logout} style={{
-            background: '#F1F5F9', color: '#475569', border: 'none',
-            borderRadius: 8, padding: '7px 14px', fontSize: 12,
-            fontWeight: 600, cursor: 'pointer'
-          }}>Sign out</button>
-        </div>
-      </div>
+      <Navbar
+        partnerName={partner.name}
+        role={partner.role}
+        portalId={partner.portalId}
+        activePage="dashboard"
+      />
 
       <div style={{ maxWidth: 1100, margin: '0 auto', padding: '28px 20px' }}>
 
