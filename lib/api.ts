@@ -33,6 +33,24 @@ export async function apiStudents(token: string, q = '', page = 0) {
   return r.json();
 }
 
+export async function apiGetMOUs(token: string) {
+  const r = await fetch(`${BASE}/api/partner/mou`, {
+    headers: { Authorization: `Bearer ${token}` },
+    cache: 'no-store',
+  });
+  if (r.status === 401 || r.status === 403) return { mous: [] };
+  return r.json().catch(() => ({ mous: [] }));
+}
+
+export async function apiSendMOU(token: string, data: object) {
+  const r = await fetch(`${BASE}/api/partner/mou`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+    body: JSON.stringify(data),
+  });
+  return r.json();
+}
+
 export async function apiAnnouncements(token: string) {
   const r = await fetch(`${BASE}/api/partner/announcements`, {
     headers: { Authorization: `Bearer ${token}` },

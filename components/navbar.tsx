@@ -6,7 +6,7 @@ interface NavbarProps {
   partnerName: string;
   role: string;
   portalId: string;
-  activePage?: 'dashboard' | 'profile';
+  activePage?: 'dashboard' | 'profile' | 'mou';
 }
 
 export default function Navbar({ partnerName, role, portalId, activePage }: NavbarProps) {
@@ -32,6 +32,7 @@ export default function Navbar({ partnerName, role, portalId, activePage }: Navb
           {([
             { label: 'Dashboard', href: '/dashboard', page: 'dashboard' },
             { label: 'Profile', href: '/profile', page: 'profile' },
+            ...(isExec ? [{ label: '🏛️ MOUs', href: '/mou', page: 'mou' }] : []),
           ] as const).map(item => (
             <a key={item.page} href={item.href} style={{
               padding: '6px 14px', borderRadius: 8, fontSize: 13, fontWeight: 600,
