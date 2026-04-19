@@ -1,0 +1,34 @@
+const BASE = process.env.NEXT_PUBLIC_API || 'https://codezoner.in';
+
+function gone() {
+  if (typeof window !== 'undefined') {
+    localStorage.removeItem('cz_session');
+    window.location.href = '/';
+  }
+}
+
+export async function apiLogin(portalId: string, password: string) {
+  const r = await fetch(`${BASE}/api/partner/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ portalId, password }),
+  });
+  return r.json();
+}
+
+export async function apiStats(token: string) {
+  const r = await fetch(`${BASE}/api/partner/stats`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (r.status === 401) { gone(); return {}; }
+  return r.json();
+}
+
+export async function apiStudents(token: string, q = '', page = 0) {
+  const r = await fetch(
+    `${BASE}/api/partner/students?q=${encodeURIComponent(q)}&page=${page}`,
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+  if (r.status === 401) { gone(); return { students: [], total: 0 }; }
+  return r.json();
+}
