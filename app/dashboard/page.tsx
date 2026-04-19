@@ -188,6 +188,12 @@ export default function Dashboard() {
               </span>
             </div>
           </div>
+          <a href="/profile" style={{
+            background: '#EFF6FF', color: '#1D4ED8',
+            border: '1px solid #BFDBFE', borderRadius: 8,
+            padding: '7px 14px', fontSize: 12,
+            fontWeight: 600, cursor: 'pointer', textDecoration: 'none'
+          }}>My Profile</a>
           <button onClick={logout} style={{
             background: '#F1F5F9', color: '#475569', border: 'none',
             borderRadius: 8, padding: '7px 14px', fontSize: 12,
