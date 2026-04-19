@@ -32,3 +32,12 @@ export async function apiStudents(token: string, q = '', page = 0) {
   if (r.status === 401) { gone(); return { students: [], total: 0 }; }
   return r.json();
 }
+
+export async function apiAnnouncements(token: string) {
+  const r = await fetch(`${BASE}/api/partner/announcements`, {
+    headers: { Authorization: `Bearer ${token}` },
+    cache: 'no-store',
+  });
+  if (r.status === 401) return { announcements: [] };
+  return r.json().catch(() => ({ announcements: [] }));
+}

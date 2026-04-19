@@ -2,7 +2,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { getSession, clearSession, getToken } from '@/lib/auth';
-import { apiStats, apiStudents } from '@/lib/api';
+import { apiStats, apiStudents, apiAnnouncements } from '@/lib/api';
 
 const PAGE_SIZE = 20;
 
@@ -95,6 +95,7 @@ export default function Dashboard() {
   const [q, setQ] = useState('');
   const [searchInput, setSearchInput] = useState('');
   const [loading, setLoading] = useState(true);
+  const [announcements, setAnnouncements] = useState<{ id: string; type: string; title: string; message: string; createdAt: string }[]>([]);
 
   useEffect(() => {
     const session = getSession();
@@ -106,13 +107,15 @@ export default function Dashboard() {
   const loadData = async (p: Partner) => {
     setLoading(true);
     const token = getToken();
-    const [s, st] = await Promise.all([
+    const [s, st, ann] = await Promise.all([
       apiStats(token),
       apiStudents(token, '', 0),
+      apiAnnouncements(token),
     ]);
     setStats(s);
     setStudents(st.students || []);
     setTotal(st.total || 0);
+    setAnnouncements(ann.announcements || []);
     setLoading(false);
   };
 
@@ -213,6 +216,36 @@ export default function Dashboard() {
           }}>
             <span style={{ fontSize: 13, fontWeight: 700, color: '#6D28D9' }}>MOU Partner</span>
             <span style={{ fontSize: 13, color: '#7C3AED' }}>{partner.college}</span>
+          </div>
+        )}
+
+        {/* Announcements */}
+        {announcements.length > 0 && (
+          <div style={{ marginBottom: 16 }}>
+            {announcements.map(a => {
+              const colors = a.type === 'warning'
+                ? { bg: '#FFFBEB', border: '#FCD34D', title: '#92400E', body: '#78350F' }
+                : a.type === 'success'
+                ? { bg: '#F0FDF4', border: '#86EFAC', title: '#15803D', body: '#166534' }
+                : { bg: '#EFF6FF', border: '#BFDBFE', title: '#1E40AF', body: '#1D4ED8' };
+              return (
+                <div key={a.id} style={{
+                  padding: '12px 18px', borderRadius: 10, marginBottom: 8,
+                  display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start',
+                  background: colors.bg, border: `1px solid ${colors.border}`,
+                }}>
+                  <div>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: colors.title, marginBottom: 3 }}>
+                      📢 {a.title}
+                    </div>
+                    <div style={{ fontSize: 12, color: colors.body }}>{a.message}</div>
+                  </div>
+                  <div style={{ fontSize: 10, color: '#94A3B8', whiteSpace: 'nowrap', marginLeft: 16 }}>
+                    {new Date(a.createdAt).toLocaleDateString('en-IN')}
+                  </div>
+                </div>
+              );
+            })}
           </div>
         )}
 
