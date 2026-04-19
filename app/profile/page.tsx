@@ -37,7 +37,7 @@ export default function ProfilePage() {
       headers: { Authorization: `Bearer ${s.token}` },
     })
       .then(r => r.json())
-      .then(d => { if (d.profile) setForm(f => ({ ...f, ...d.profile })); })
+      .then(d => { if (d.name) setForm(f => ({ ...f, phone: d.phone || '', linkedin: d.linkedin || '', city: d.city || '', college: d.college || '', bio: d.bio || '', profileImage: d.profileImage || '' })); })
       .catch(() => {});
   }, []);
 
@@ -45,7 +45,7 @@ export default function ProfilePage() {
     setSaving(true);
     const s = getSession();
     await fetch(`${API}/api/partner/profile`, {
-      method: 'POST',
+      method: 'PATCH',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${s?.token}` },
       body: JSON.stringify(form),
     });
@@ -72,11 +72,13 @@ export default function ProfilePage() {
       pdfUrl = d.url || '';
     }
 
-    await fetch(`${API}/api/partner/apply-executive`, {
+    const r2 = await fetch(`${API}/api/partner/mou-apply`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${s?.token}` },
       body: JSON.stringify({ mouCollege, mouNote, pdfUrl }),
     });
+    const d2 = await r2.json();
+    if (!d2.success) { alert(d2.error || 'Submission failed'); setMouSaving(false); return; }
 
     setMouSent(true);
     setMouSaving(false);
