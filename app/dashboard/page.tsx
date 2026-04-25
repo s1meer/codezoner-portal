@@ -101,6 +101,7 @@ export default function Dashboard() {
   useEffect(() => {
     const session = getSession();
     if (!session) { router.push('/'); return; }
+    if (session.partner.role === 'college') { router.push('/college'); return; }
     setPartner(session.partner);
     loadData(session.partner);
   }, []);

@@ -59,3 +59,28 @@ export async function apiAnnouncements(token: string) {
   if (r.status === 401) return { announcements: [] };
   return r.json().catch(() => ({ announcements: [] }));
 }
+
+export async function apiCollegeStats(token: string) {
+  const r = await fetch(`${BASE}/api/partner/college/stats`, {
+    headers: { Authorization: `Bearer ${token}` },
+    cache: 'no-store',
+  });
+  if (r.status === 401) { gone(); return null; }
+  return r.json();
+}
+
+export async function apiCollegeStudents(token: string, params: Record<string, string>) {
+  const qs = new URLSearchParams(params).toString();
+  const r = await fetch(`${BASE}/api/partner/college/students?${qs}`, {
+    headers: { Authorization: `Bearer ${token}` },
+    cache: 'no-store',
+  });
+  if (r.status === 401) { gone(); return { students: [], total: 0 }; }
+  return r.json();
+}
+
+export async function apiCollegeExport(token: string) {
+  return fetch(`${BASE}/api/partner/college/export`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+}
