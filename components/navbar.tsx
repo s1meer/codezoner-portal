@@ -6,12 +6,23 @@ interface NavbarProps {
   partnerName: string;
   role: string;
   portalId: string;
-  activePage?: 'dashboard' | 'profile' | 'mou';
+  activePage?: 'dashboard' | 'profile' | 'mou' | 'students' | 'analytics' | 'college';
 }
 
 export default function Navbar({ partnerName, role, portalId, activePage }: NavbarProps) {
   const router = useRouter();
   const isExec = role?.toLowerCase() === 'executive';
+  const isCollege = role?.toLowerCase() === 'college';
+
+  const navItems = [
+    { label: '📊 Dashboard', href: isCollege ? '/college' : '/dashboard', page: 'dashboard' as const },
+    ...(isCollege ? [
+      { label: '👥 Students', href: '/students', page: 'students' as const },
+      { label: '📈 Analytics', href: '/analytics', page: 'analytics' as const },
+    ] : []),
+    { label: '👤 Profile', href: '/profile', page: 'profile' as const },
+    ...(isExec ? [{ label: '🏛️ MOUs', href: '/mou', page: 'mou' as const }] : []),
+  ];
 
   return (
     <nav style={{
@@ -29,11 +40,7 @@ export default function Navbar({ partnerName, role, portalId, activePage }: Navb
         }}>CZ</div>
 
         <div style={{ display: 'flex', gap: 4 }}>
-          {([
-            { label: 'Dashboard', href: '/dashboard', page: 'dashboard' },
-            { label: 'Profile', href: '/profile', page: 'profile' },
-            ...(isExec ? [{ label: '🏛️ MOUs', href: '/mou', page: 'mou' }] : []),
-          ] as const).map(item => (
+          {navItems.map(item => (
             <a key={item.page} href={item.href} style={{
               padding: '6px 14px', borderRadius: 8, fontSize: 13, fontWeight: 600,
               textDecoration: 'none', transition: 'all 0.15s',
@@ -54,10 +61,10 @@ export default function Navbar({ partnerName, role, portalId, activePage }: Navb
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, justifyContent: 'flex-end', marginTop: 2 }}>
             <span style={{
               fontSize: 10, padding: '1px 8px', borderRadius: 99, fontWeight: 700,
-              background: isExec ? '#7C3AED' : '#1D4ED8',
+              background: isExec ? '#7C3AED' : isCollege ? '#0D9488' : '#1D4ED8',
               color: '#fff',
             }}>
-              {isExec ? '🏛️ Executive' : '⭐ Ambassador'}
+              {isExec ? '🏛️ Executive' : isCollege ? '🏫 College' : '⭐ Ambassador'}
             </span>
             <span style={{
               fontSize: 10, padding: '1px 8px', borderRadius: 99, fontWeight: 600,
